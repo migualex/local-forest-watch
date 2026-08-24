@@ -1,22 +1,17 @@
-# Forest Canopy Cover
+# Canopy Cover Analysis
 
 <p align="center">
   <img src="https://img.shields.io/badge/license-GPL--3.0-blue" />
-  <a href="https://programa-r-316514.projects.earthengine.app/view/forest-canopy"><img src="https://img.shields.io/badge/platform-Google%20Earth%20Engine-brightgreen" /></a>
-  <img src="https://img.shields.io/badge/lifecycle-maturing-green.svg" />
+  <img src="https://img.shields.io/badge/lifecycle-experimental-orange.svg" />
 </p>
 
-Aplicativo desenvolvido por Cassiano Messias, Guilherme Correia e Miguel Cunha para a análise interativa da cobertura florestal a partir de imagens Sentinel-2, com o objetivo de comparar a porcentagem dessa cobertura entre áreas naturais e antrópicas em diferentes cenários, voltado para a Organização das Nações Unidas para a Alimentação e a Agricultura (FAO) e o Prodes.
-
-## Como usar
-
-### 1. Definir a área de interesse
+### 1. Defina a área de interesse
 - Informe Latitude, Longitude e o tamanho da área de interesse (em metros), ou
 - Desenhe um polígono diretamente no mapa.
 
 ![](figures/image1.png)
 
-### 2. Configurar a busca do Sentinel-2
+### 2. Configure a busca do Sentinel-2
 - Defina a data inicial e a data final (formato `YYYY-MM-dd`).
 - Defina o percentual máximo de nuvens nas imagens.
 
