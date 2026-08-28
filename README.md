@@ -1,4 +1,4 @@
-# Canopy Cover Analysis
+# Local Forest Cover
 
 <p align="center">
   <img src="https://img.shields.io/badge/License-GPLv3-blue" />
