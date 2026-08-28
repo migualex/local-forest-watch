@@ -3,6 +3,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/license-GPL--3.0-blue" />
   <img src="https://img.shields.io/badge/lifecycle-experimental-orange.svg" />
+  <img src="https://img.shields.io/badge/Google%20Earth%20Engine-4285F4?logo=googleearthengine&logoColor=white" alt="Google Earth Engine" />
 </p>
 
 ### 1. Defina a área de interesse
