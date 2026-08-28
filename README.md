@@ -1,4 +1,4 @@
-# Local Forest Cover
+# Local Forest Watch
 
 <p align="center">
   <img src="https://img.shields.io/badge/License-GPLv3-blue" />
