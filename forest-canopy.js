@@ -1,5 +1,5 @@
 // =========================================================================
-// Forest Canopy Cover
+// Local Forest Watch
 // Author: Miguel Alexandre da Cunha
 // Contact: miguel.cunha@inpe.br
 // =========================================================================
@@ -22,14 +22,14 @@ var S2_BASEMAP_MONTHS_BACK = 3;
 var S2_BASEMAP_CLOUD_LIMIT = 30;
 
 // Sentinel-2 high-contrast visual parameters
-var S2_VIS_PARAMS = { bands: ['B4', 'B3', 'B2'], min: 0, max: 2000, gamma: 1.1 };
+var S2_VIS_PARAMS = {bands: ['B4', 'B3', 'B2'], min: 0, max: 2000, gamma: 1.1};
 
 var roi = null;
 
 // ---- Jenks Natural Breaks Algorithm ----
 function getJenksBreaks(data, numClasses) {
-  data = data.filter(function (v) { return v !== null && v !== undefined && !isNaN(v); });
-  data.sort(function (a, b) { return a - b; });
+  data = data.filter(function(v) { return v !== null && v !== undefined && !isNaN(v); });
+  data.sort(function(a, b) { return a - b; });
   if (data.length === 0) return [];
   if (data.length <= numClasses) return data;
 
@@ -127,8 +127,8 @@ function refreshOutline(geom) {
     outlineLayer = null;
   }
   if (!geom) return;
-  var outlineImage = ee.Image().paint({ featureCollection: ee.FeatureCollection(ee.Feature(geom)), color: 1, width: 2 });
-  outlineLayer = ui.Map.Layer(outlineImage, { palette: ['red'] }, 'AOI outline');
+  var outlineImage = ee.Image().paint({featureCollection: ee.FeatureCollection(ee.Feature(geom)), color: 1, width: 2});
+  outlineLayer = ui.Map.Layer(outlineImage, {palette: ['red']}, 'AOI outline');
   Map.layers().add(outlineLayer);
 }
 
@@ -147,35 +147,35 @@ drawingTools.onEdit(captureDrawnShape);
 // =========================================================================
 // UI Panel & Legend Setup 
 // =========================================================================
-var panel = ui.Panel({ style: { width: '340px', padding: '8px' } });
+var panel = ui.Panel({style: {width: '340px', padding: '8px'}});
 panel.add(ui.Label({
-  value: 'Forest Canopy Cover',
-  style: { fontWeight: 'bold', fontSize: '18px', margin: '8px 8px 2px 8px' }
+  value: 'Local Forest Watch',
+  style: {fontWeight: 'bold', fontSize: '18px', margin: '8px 8px 2px 8px'}
 }));
 panel.add(ui.Label({
-  value: 'Developed by Miguel Alexandre da Cunha',
-  style: { fontSize: '11px', color: '#777777', margin: '0 8px 2px 8px' }
+  value: 'by Miguel Alexandre da Cunha',
+  style: {fontSize: '11px', color: '#777777', margin: '0 8px 2px 8px'}
 }));
 panel.add(ui.Label({
-  value: 'GitHub',
-  style: { fontSize: '11px', color: '#0366d6', margin: '0 8px 12px 8px' },
-  targetUrl: 'https://github.com/migualex/forest-canopy'
+  value: 'github',
+  style: {fontSize: '11px', color: '#0366d6', margin: '0 8px 12px 8px'},
+  targetUrl: 'https://github.com/migualex/local-forest-watch'
 }));
-panel.add(ui.Label('1. Region of Interest', { fontWeight: 'bold' }));
-var latBox = ui.Textbox({ placeholder: '-17.5438', value: '' });
-var lonBox = ui.Textbox({ placeholder: '-55.7287', value: '' });
-var bufferBox = ui.Textbox({ placeholder: '100', value: String(DEFAULT_BUFFER_RADIUS_M) });
+panel.add(ui.Label('1. Region of Interest', {fontWeight: 'bold'}));
+var latBox = ui.Textbox({placeholder: '-17.5438', value: ''});
+var lonBox = ui.Textbox({placeholder: '-55.7287', value: ''});
+var bufferBox = ui.Textbox({placeholder: '100', value: String(DEFAULT_BUFFER_RADIUS_M)});
 panel.add(ui.Panel([
   ui.Label('Latitude:'), latBox,
   ui.Label('Longitude:'), lonBox,
   ui.Label('ROI in meters:'), bufferBox
 ]));
-panel.add(ui.Label('Or draw a polygon on the map, then click Run Analysis.', { fontStyle: 'italic', fontSize: '11px', color: 'gray' }));
+panel.add(ui.Label('Or draw a polygon on the map, then click Run Analysis.', {fontStyle: 'italic', fontSize: '11px', color: 'gray'}));
 
-panel.add(ui.Label('2. Sentinel-2 parameters', { fontWeight: 'bold' }));
-var startBox = ui.Textbox({ placeholder: 'YYYY-MM-dd', value: DEFAULT_START_DATE });
-var endBox = ui.Textbox({ placeholder: 'YYYY-MM-dd', value: DEFAULT_END_DATE });
-var cloudBox = ui.Textbox({ value: String(DEFAULT_CLOUD_LIMIT) });
+panel.add(ui.Label('2. Sentinel-2 parameters', {fontWeight: 'bold'}));
+var startBox = ui.Textbox({placeholder: 'YYYY-MM-dd', value: DEFAULT_START_DATE});
+var endBox = ui.Textbox({placeholder: 'YYYY-MM-dd', value: DEFAULT_END_DATE});
+var cloudBox = ui.Textbox({value: String(DEFAULT_CLOUD_LIMIT)});
 var jenksClassesSlider = ui.Slider({
   min: 2,
   max: 10,
@@ -189,12 +189,12 @@ panel.add(ui.Panel([
   ui.Label('Number of classes:'), jenksClassesSlider
 ]));
 
-var runButton = ui.Button({ label: 'Run Analysis', onClick: runAnalysis });
+var runButton = ui.Button({label: 'Run Analysis', onClick: runAnalysis});
 panel.add(runButton);
 panel.add(ui.Label(''));
 
-var resultsPanel = ui.Panel({ style: { padding: '6px', border: '1px solid #ccc', margin: '8px 0' } });
-resultsPanel.add(ui.Label('Results will appear here.', { color: 'gray' }));
+var resultsPanel = ui.Panel({style: {padding: '6px', border: '1px solid #ccc', margin: '8px 0'}});
+resultsPanel.add(ui.Label('Results will appear here.', {color: 'gray'}));
 panel.add(resultsPanel);
 
 // Dynamic Legend Panel
@@ -208,7 +208,7 @@ var legendPanel = ui.Panel({
 
 function renderDynamicLegend(hasForest, ndviMin, ndviMax, heightMin, heightMax, jenksBins) {
   legendPanel.clear();
-  legendPanel.add(ui.Label('Map Legend', { fontWeight: 'bold', fontSize: '14px', margin: '0 0 6px 0' }));
+  legendPanel.add(ui.Label('Map Legend', {fontWeight: 'bold', fontSize: '14px', margin: '0 0 6px 0'}));
 
   function makeRow(color, label) {
     var colorBox = ui.Label({
@@ -219,18 +219,18 @@ function renderDynamicLegend(hasForest, ndviMin, ndviMax, heightMin, heightMax, 
         border: '1px solid #999'
       }
     });
-    var description = ui.Label({ value: label, style: { margin: '0', fontSize: '12px' } });
+    var description = ui.Label({value: label, style: {margin: '0', fontSize: '12px'}});
     return ui.Panel({
       widgets: [colorBox, description],
       layout: ui.Panel.Layout.Flow('horizontal'),
-      style: { margin: '2px 0' }
+      style: {margin: '2px 0'}
     });
   }
 
   // Forest Cover Legend (Jenks Natural Breaks - Highest Class)
   if (jenksBins && jenksBins.length > 0) {
-    legendPanel.add(ui.Label('Forest Cover (Jenks)', { fontWeight: 'bold', fontSize: '12px', margin: '4px 0 2px 0' }));
-    jenksBins.forEach(function (b) {
+    legendPanel.add(ui.Label('Forest Cover (Jenks)', {fontWeight: 'bold', fontSize: '12px', margin: '6px 0 2px 0'}));
+    jenksBins.forEach(function(b) {
       legendPanel.add(makeRow(b.color, b.label));
     });
   }
@@ -238,21 +238,21 @@ function renderDynamicLegend(hasForest, ndviMin, ndviMax, heightMin, heightMax, 
   // NDVI Legend
   if (ndviMin !== null && ndviMax !== null) {
     var ndviBins = [
-      { min: 0.0, max: 0.2, label: '0.0 - 0.2', color: '#1a1aff' },
-      { min: 0.2, max: 0.4, label: '0.2 - 0.4', color: '#8080ff' },
-      { min: 0.4, max: 0.6, label: '0.4 - 0.6', color: '#ffffff' },
-      { min: 0.6, max: 0.8, label: '0.6 - 0.8', color: '#99cc99' },
-      { min: 0.8, max: 1.0, label: '0.8 - 1.0', color: '#008000' }
+      {min: 0.0, max: 0.2, label: '0.0 - 0.2', color: '#1a1aff'},
+      {min: 0.2, max: 0.4, label: '0.2 - 0.4', color: '#8080ff'},
+      {min: 0.4, max: 0.6, label: '0.4 - 0.6', color: '#ffffff'},
+      {min: 0.6, max: 0.8, label: '0.6 - 0.8', color: '#99cc99'},
+      {min: 0.8, max: 1.0, label: '0.8 - 1.0', color: '#008000'}
     ];
 
     var tol = 0.05;
-    var visibleNdviBins = ndviBins.filter(function (b) {
+    var visibleNdviBins = ndviBins.filter(function(b) {
       return (ndviMax + tol) >= b.min && (ndviMin - tol) <= b.max;
     });
 
     if (visibleNdviBins.length > 0) {
-      legendPanel.add(ui.Label('NDVI', { fontWeight: 'bold', fontSize: '12px', margin: '6px 0 2px 0' }));
-      visibleNdviBins.forEach(function (b) {
+      legendPanel.add(ui.Label('NDVI', {fontWeight: 'bold', fontSize: '12px', margin: '6px 0 2px 0'}));
+      visibleNdviBins.forEach(function(b) {
         legendPanel.add(makeRow(b.color, b.label));
       });
     }
@@ -261,23 +261,23 @@ function renderDynamicLegend(hasForest, ndviMin, ndviMax, heightMin, heightMax, 
   // Original Canopy Height Legend (Unchanged)
   if (heightMin !== null && heightMax !== null) {
     var canopyBins = [
-      { min: 0, max: 5, label: '0 - 5 m', color: '#ffffcc' },
-      { min: 5, max: 10, label: '5 - 10 m', color: '#c7e9b4' },
-      { min: 10, max: 15, label: '10 - 15 m', color: '#78c679' },
-      { min: 15, max: 20, label: '20 - 25 m', color: '#41ab5d' },
-      { min: 20, max: 25, label: '20 - 25 m', color: '#238443' },
-      { min: 25, max: 30, label: '25 - 30 m', color: '#004529' },
-      { min: 30, max: 1000, label: '> 30 m', color: '#002616' }
+      {min: 0, max: 5, label: '0 - 5 m', color: '#ffffcc'},
+      {min: 5, max: 10, label: '5 - 10 m', color: '#c7e9b4'},
+      {min: 10, max: 15, label: '10 - 15 m', color: '#78c679'},
+      {min: 15, max: 20, label: '20 - 25 m', color: '#41ab5d'},
+      {min: 20, max: 25, label: '20 - 25 m', color: '#238443'},
+      {min: 25, max: 30, label: '25 - 30 m', color: '#004529'},
+      {min: 30, max: 1000, label: '> 30 m', color: '#002616'}
     ];
 
     var cTol = 0.5;
-    var visibleCanopyBins = canopyBins.filter(function (b) {
+    var visibleCanopyBins = canopyBins.filter(function(b) {
       return (heightMax + cTol) >= b.min && (heightMin - cTol) <= b.max;
     });
 
     if (visibleCanopyBins.length > 0) {
-      legendPanel.add(ui.Label('Canopy Height', { fontWeight: 'bold', fontSize: '12px', margin: '6px 0 2px 0' }));
-      visibleCanopyBins.forEach(function (b) {
+      legendPanel.add(ui.Label('Canopy Height', {fontWeight: 'bold', fontSize: '12px', margin: '6px 0 2px 0'}));
+      visibleCanopyBins.forEach(function(b) {
         legendPanel.add(makeRow(b.color, b.label));
       });
     }
@@ -287,7 +287,7 @@ function renderDynamicLegend(hasForest, ndviMin, ndviMax, heightMin, heightMax, 
 }
 
 ui.root.clear();
-ui.root.add(ui.SplitPanel({ firstPanel: panel, secondPanel: Map, orientation: 'horizontal' }));
+ui.root.add(ui.SplitPanel({firstPanel: panel, secondPanel: Map, orientation: 'horizontal'}));
 
 // =========================================================================
 // Main Execution
@@ -298,7 +298,7 @@ function runAnalysis() {
   outlineLayer = null;
   legendPanel.clear();
   resultsPanel.clear();
-  resultsPanel.add(ui.Label('Loading area of interest...', { color: 'gray' }));
+  resultsPanel.add(ui.Label('Loading area of interest...', {color: 'gray'}));
 
   var startDate = startBox.getValue();
   var endDate = endBox.getValue();
@@ -307,7 +307,7 @@ function runAnalysis() {
 
   if (isNaN(cloudLimit)) {
     resultsPanel.clear();
-    resultsPanel.add(ui.Label('Enter a valid cloud percentage.', { color: 'red' }));
+    resultsPanel.add(ui.Label('Enter a valid cloud percentage.', {color: 'red'}));
     return;
   }
 
@@ -321,12 +321,12 @@ function runAnalysis() {
 
     if (isNaN(lat) || isNaN(lon)) {
       resultsPanel.clear();
-      resultsPanel.add(ui.Label('Enter valid numeric latitude and longitude, or draw a polygon on the map.', { color: 'red' }));
+      resultsPanel.add(ui.Label('Enter valid numeric latitude and longitude, or draw a polygon on the map.', {color: 'red'}));
       return;
     }
     if (isNaN(bufferRadius) || bufferRadius <= 0) {
       resultsPanel.clear();
-      resultsPanel.add(ui.Label('Enter a valid positive number for buffer radius.', { color: 'red' }));
+      resultsPanel.add(ui.Label('Enter a valid positive number for buffer radius.', {color: 'red'}));
       return;
     }
 
@@ -339,20 +339,20 @@ function runAnalysis() {
     .filterDate(startDate, endDate)
     .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', cloudLimit));
 
-  s2Collection.size().evaluate(function (count) {
+  s2Collection.size().evaluate(function(count) {
     if (!count) {
       resultsPanel.clear();
       resultsPanel.add(ui.Label(
         'No Sentinel-2 images found for this date range and cloud limit. ' +
-        'Try increasing the date range or the cloud percentage.', { color: 'red' }));
+        'Try increasing the date range or the cloud percentage.', {color: 'red'}));
       return;
     }
 
     var s2Base = s2Collection.median();
     Map.addLayer(s2Base, S2_VIS_PARAMS, 'Sentinel-2 basemap', true);
 
-    runJenksAnalysis(s2Collection, numClasses, function (ndvi, forestPixels, jenksBins) {
-      runCanopyHeight(ndvi, forestPixels, jenksBins);
+    runJenksAnalysis(s2Collection, numClasses, function(ndvi, forestPixels, jenksBins, forestMask) {
+      runCanopyHeight(ndvi, forestPixels, jenksBins, forestMask);
     });
   });
 }
@@ -377,10 +377,10 @@ function runJenksAnalysis(s2Collection, numClasses, onComplete) {
   ee.Dictionary({
     date: imageDate,
     samples: ndviSamples
-  }).evaluate(function (data) {
+  }).evaluate(function(data) {
     if (!data || !data.samples || data.samples.length === 0) {
       resultsPanel.clear();
-      resultsPanel.add(ui.Label('Error computing Jenks statistics (AOI may be too small/uniform).', { color: 'red' }));
+      resultsPanel.add(ui.Label('Error computing Jenks statistics (AOI may be too small/uniform).', {color: 'red'}));
       return;
     }
 
@@ -389,7 +389,7 @@ function runJenksAnalysis(s2Collection, numClasses, onComplete) {
 
     if (jenksBreaks.length <= 1) {
       resultsPanel.clear();
-      resultsPanel.add(ui.Label('Error computing Jenks breaks.', { color: 'red' }));
+      resultsPanel.add(ui.Label('Error computing Jenks breaks.', {color: 'red'}));
       return;
     }
 
@@ -412,16 +412,16 @@ function runJenksAnalysis(s2Collection, numClasses, onComplete) {
     ee.Dictionary({
       forestCount: forestPixelCount.get('NDVI'),
       totalCount: totalPixelCount.get('NDVI')
-    }).evaluate(function (stats) {
+    }).evaluate(function(stats) {
       var forestPixels = stats ? (stats.forestCount || 0) : 0;
       var totalPixels = stats ? (stats.totalCount || 0) : 0;
       var forestPct = totalPixels > 0 ? ((forestPixels / totalPixels) * 100).toFixed(2) : '0.00';
 
       Map.addLayer(latestImage.clip(roi), S2_VIS_PARAMS, 'Sentinel-2 (' + data.date + ')', true);
-      Map.addLayer(ndvi, { min: 0, max: 1, palette: ['blue', 'white', 'green'] }, 'NDVI', false);
+      Map.addLayer(ndvi, {min: 0, max: 1, palette: ['blue', 'white', 'green']}, 'NDVI', false);
 
       // Display ONLY the highest Jenks class in dark green (#006400). All other classes are transparent.
-      Map.addLayer(forestMask.selfMask().clip(roi), { palette: ['#006400'] }, 'Forest Cover (Jenks Class ' + numClasses + ')', true);
+      Map.addLayer(forestMask.selfMask().clip(roi), {palette: ['#006400']}, 'Forest Cover (Jenks Class ' + numClasses + ')', true);
 
       var jenksBinsForLegend = [{
         label: 'Forest (Class ' + numClasses + ': ' + minForestNdvi.toFixed(2) + ' - ' + maxForestNdvi.toFixed(2) + ')',
@@ -429,11 +429,11 @@ function runJenksAnalysis(s2Collection, numClasses, onComplete) {
       }];
 
       resultsPanel.clear();
-      resultsPanel.add(ui.Label('Forest Cover Analysis', { fontWeight: 'bold' }));
+      resultsPanel.add(ui.Label('Forest Cover Analysis', {fontWeight: 'bold'}));
       resultsPanel.add(ui.Label('Image date: ' + data.date));
-      resultsPanel.add(ui.Label('Forest cover: ' + forestPct + '%', { fontWeight: 'bold', color: 'darkgreen' }));
+      resultsPanel.add(ui.Label('Forest cover: ' + forestPct + '%', {fontWeight: 'bold', color: 'darkgreen'}));
 
-      resultsPanel.add(ui.Label('Jenks Natural Breaks:', { fontWeight: 'bold', margin: '4px 0 0 0' }));
+      resultsPanel.add(ui.Label('Jenks Natural Breaks:', {fontWeight: 'bold'}));
       for (var k = 0; k < jenksBreaks.length - 1; k++) {
         var classText = '  Class ' + (k + 1) + ': ' + jenksBreaks[k].toFixed(2) + ' to ' + jenksBreaks[k + 1].toFixed(2);
         if (k === numClasses - 1) {
@@ -442,7 +442,7 @@ function runJenksAnalysis(s2Collection, numClasses, onComplete) {
         resultsPanel.add(ui.Label(classText));
       }
 
-      if (onComplete) onComplete(ndvi, forestPixels, jenksBinsForLegend);
+      if (onComplete) onComplete(ndvi, forestPixels, jenksBinsForLegend, forestMask);
     });
   });
 }
@@ -450,10 +450,10 @@ function runJenksAnalysis(s2Collection, numClasses, onComplete) {
 // =========================================================================
 // Canopy Height
 // =========================================================================
-function runCanopyHeight(ndvi, forestPixels, jenksBins) {
+function runCanopyHeight(ndvi, forestPixels, jenksBins, forestMask) {
   var canopy = ee.ImageCollection(CANOPY_HEIGHT_ID).mosaic().clip(roi).rename('height');
-  var heightVis = { min: 0, max: 30, palette: ['#ffffcc', '#78c679', '#238443', '#004529'] };
-
+  var heightVis = {min: 0, max: 30, palette: ['#ffffcc','#78c679','#238443','#004529']};
+  
   // 5. Canopy height layer
   Map.addLayer(canopy, heightVis, 'Canopy Height (m)', false);
 
@@ -461,9 +461,9 @@ function runCanopyHeight(ndvi, forestPixels, jenksBins) {
     featureCollection: ee.FeatureCollection(ee.Feature(roi)),
     color: 1, width: 2
   });
-
+  
   // 6. ROI boundary line
-  Map.addLayer(roiOutline, { palette: 'yellow' }, 'ROI', true);
+  Map.addLayer(roiOutline, {palette: 'yellow'}, 'ROI', true);
 
   // Compute exact ROI ranges for NDVI and Canopy Height
   var ndviStats = ndvi.reduceRegion({
@@ -472,7 +472,13 @@ function runCanopyHeight(ndvi, forestPixels, jenksBins) {
   });
 
   var canopyStats = canopy.reduceRegion({
-    reducer: ee.Reducer.minMax().combine({ reducer2: ee.Reducer.mean(), sharedInputs: true }),
+    reducer: ee.Reducer.minMax().combine({reducer2: ee.Reducer.mean(), sharedInputs: true}),
+    geometry: roi, scale: 1, maxPixels: 1e10, bestEffort: true, tileScale: 4
+  });
+
+  // Canopy height restricted to pixels classified as forest by the Jenks natural breaks
+  var canopyForestStats = canopy.updateMask(forestMask).reduceRegion({
+    reducer: ee.Reducer.minMax().combine({reducer2: ee.Reducer.mean(), sharedInputs: true}),
     geometry: roi, scale: 1, maxPixels: 1e10, bestEffort: true, tileScale: 4
   });
 
@@ -484,18 +490,20 @@ function runCanopyHeight(ndvi, forestPixels, jenksBins) {
   ee.Dictionary({
     ndviStats: ndviStats,
     canopyStats: canopyStats,
+    canopyForestStats: canopyForestStats,
     tallFrac: tallPct.get('height')
-  }).evaluate(function (res) {
-    resultsPanel.add(ui.Label('Canopy Height (Meta 1m)', { fontWeight: 'bold' }));
-
+  }).evaluate(function(res) {
+    resultsPanel.add(ui.Label('Canopy Height (Meta 1m)', {fontWeight: 'bold'}));
+    
     var cStats = res ? res.canopyStats : null;
     var nStats = res ? res.ndviStats : null;
+    var cForestStats = res ? res.canopyForestStats : null;
 
-    if (!cStats || cStats.height_mean === undefined || cStats.height_mean === null) {
-      resultsPanel.add(ui.Label('No canopy height data returned for this AOI.', { color: 'red' }));
+    if (!cForestStats || cForestStats.height_mean === undefined || cForestStats.height_mean === null) {
+      resultsPanel.add(ui.Label('No canopy height data returned for the forest area in this AOI.', {color: 'red'}));
     } else {
-      resultsPanel.add(ui.Label('Mean height: ' + cStats.height_mean.toFixed(2) + ' m'));
-      resultsPanel.add(ui.Label('Maximum height: ' + cStats.height_max.toFixed(2) + ' m'));
+      resultsPanel.add(ui.Label('Mean height: ' + cForestStats.height_mean.toFixed(2) + ' m'));
+      resultsPanel.add(ui.Label('Maximum height: ' + cForestStats.height_max.toFixed(2) + ' m'));
       var tallPctVal = res.tallFrac !== null ? (res.tallFrac * 100).toFixed(2) : 'N/A';
     }
 
