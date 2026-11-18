@@ -159,7 +159,7 @@ panel.add(ui.Label({
 panel.add(ui.Label({
   value: 'github',
   style: {fontSize: '11px', color: '#0366d6', margin: '0 8px 12px 8px'},
-  targetUrl: 'https://github.com/migualex/local-forest-watch'
+  targetUrl: 'https://github.com/migualex/forest-canopy'
 }));
 panel.add(ui.Label('1. Region of Interest', {fontWeight: 'bold'}));
 var latBox = ui.Textbox({placeholder: '-17.5438', value: ''});
@@ -264,7 +264,7 @@ function renderDynamicLegend(hasForest, ndviMin, ndviMax, heightMin, heightMax, 
       {min: 0, max: 5, label: '0 - 5 m', color: '#ffffcc'},
       {min: 5, max: 10, label: '5 - 10 m', color: '#c7e9b4'},
       {min: 10, max: 15, label: '10 - 15 m', color: '#78c679'},
-      {min: 15, max: 20, label: '20 - 25 m', color: '#41ab5d'},
+      {min: 15, max: 20, label: '15 - 20 m', color: '#41ab5d'},
       {min: 20, max: 25, label: '20 - 25 m', color: '#238443'},
       {min: 25, max: 30, label: '25 - 30 m', color: '#004529'},
       {min: 30, max: 1000, label: '> 30 m', color: '#002616'}
